@@ -1,13 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'application'
 
+mainClassName = 'edu.vt.rhids.main.RHIDS'
 sourceCompatibility = 1.8
-version = '1.0'
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
-    }
-}
+version = '0.1'
 
 repositories {
     mavenCentral()
@@ -15,20 +12,4 @@ repositories {
 
 dependencies {
     compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
-}
-
-test {
-    systemProperties 'property': 'value'
-}
-
-uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-    }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
 }
