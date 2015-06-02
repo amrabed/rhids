@@ -24,12 +24,14 @@ public class Classifier
 {
 	private final BufferedReader reader;
 	private final Statistics stats;
-	private final Database db = new Database();
+	private final Database db;
 
-	public Classifier(BufferedReader reader, Statistics stats) throws IOException
+	public Classifier(BufferedReader reader, Statistics stats, String databaseFile) throws IOException
 	{
 		this.reader = reader;
 		this.stats = stats;
+
+		db = new Database(databaseFile);
 	}
 
 	public boolean trainUnconditionally() throws IOException
@@ -52,28 +54,31 @@ public class Classifier
 				{
 					// Failed to train using input file
 					Logger.signal("Training failed", Verbosity.LOW);
+					db.dump("/var/log/db.dump");
 					return false;
 				}
 			}
 			Logger.log("Epoch " + stats.getTotalEpochs() + ": Database size is " + db.size(), Verbosity.MEDIUM);
 			stats.incrementTrainingEpochs();
 		}
+		db.dump("/var/log/db.dump");
+		return true;
 
-		return train();
+		// return train();
 	}
 
 	public boolean train() throws IOException
 	{
 		final SimilarityVector similarity = new SimilarityVector();
 		final Window window = new Window();
-		Database lastEpochChange = new Database();
+		Database lastEpochChange = new Database(null);
 		String syscall;
 
 		// while (!similarity.isAbove(stats.getTrainThreshold()))
 		while (!RHIDS.isDoneTraining())
 		{
 			Logger.log("\nEpoch " + stats.getTotalEpochs(), Verbosity.MEDIUM);
-			final Database currentEpochChange = new Database();
+			final Database currentEpochChange = new Database(null);
 			for (int i = 0; i < stats.getEpochSize(); i++)
 			{
 				if ((syscall = SyscallParser.parse(reader)) != null)
@@ -86,6 +91,7 @@ public class Classifier
 				{
 					// Failed to train using input file
 					Logger.signal("Training failed", Verbosity.LOW);
+					db.dump("/var/log/db.dump");
 					return false;
 				}
 			}
@@ -102,6 +108,7 @@ public class Classifier
 		Logger.emphasize("\nStable Database size: " + db.size(), Verbosity.LOW);
 		Logger.emphasize("\n" + stats.getTrainingEpochs() * stats.getEpochSize() + " system calls used for training\n",
 				Verbosity.LOW);
+		db.dump("/var/log/db.dump");
 		return true;
 	}
 
@@ -111,7 +118,7 @@ public class Classifier
 		String syscall;
 		while (true)
 		{
-			final Database currentEpochChange = new Database();
+			final Database currentEpochChange = new Database(null);
 
 			boolean isAnomalousEpoch = false;
 			int nMismatches = 0;

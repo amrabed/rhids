@@ -14,15 +14,26 @@ import edu.vt.rhids.main.RHIDS;
 public class BoSC extends ArrayList<Byte>
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	public BoSC(Window window)
 	{
 		super(Collections.nCopies(RHIDS.indexMap.size() + 1, (byte) 0));
-		for(String syscall : window)
+		for (String syscall : window)
 		{
 			int index = RHIDS.indexMap.get(syscall);
 			Byte count = get(index);
 			set(index, ++count);
+		}
+	}
+
+	public BoSC(String string)
+	{
+		string = string.replace("[", "");
+		string = string.replace("]", "");
+
+		for (String value : string.split(","))
+		{
+			add(Byte.parseByte(value));
 		}
 	}
 }

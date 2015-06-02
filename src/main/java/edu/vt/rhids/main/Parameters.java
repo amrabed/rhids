@@ -5,8 +5,8 @@ public class Parameters
 	public static final IntegerRange DEFAULT_EPOCH_SIZE = new IntegerRange(2500, 2500, 50000);
 	public static final FloatRange DEFAULT_TRAIN_THRESHOLD = new FloatRange(0.9f, 0.001f, 1f);
 	public static final IntegerRange DEFAULT_TEST_THRESHOLD = new IntegerRange(5, 5, 200);
-	
-	public String inputFile;
+
+	public String inputFile, databaseFile;
 	public IntegerRange epochSize = DEFAULT_EPOCH_SIZE;
 	public FloatRange trainThreshold = DEFAULT_TRAIN_THRESHOLD;
 	public IntegerRange testThreshold = DEFAULT_TEST_THRESHOLD;
@@ -14,6 +14,11 @@ public class Parameters
 	public void setNormalFilePath(String normalFilePath)
 	{
 		this.inputFile = normalFilePath;
+	}
+
+	public void setDatabaseFilePath(String databaseFile)
+	{
+		this.databaseFile = databaseFile;
 	}
 
 	public void setEpochSize(String range)
@@ -31,6 +36,7 @@ public class Parameters
 		this.testThreshold.set(range);
 	}
 
+	@Override
 	public String toString()
 	{
 		String output = new String();
@@ -77,7 +83,8 @@ public class Parameters
 				break;
 			}
 		}
-		
+
+		@Override
 		public String toString()
 		{
 			return "[" + min + ((max == min) ? "" : ":" + step + ":" + max) + "]";
@@ -120,13 +127,14 @@ public class Parameters
 				break;
 			}
 		}
-		
+
+		@Override
 		public String toString()
 		{
 			return "[" + min + ((max == min) ? "" : ":" + step + ":" + max) + "]";
 		}
 	}
-	
+
 	public static class Range<T>
 	{
 		public T min, step, max;
@@ -163,17 +171,18 @@ public class Parameters
 				break;
 			}
 		}
+
 		private T parse(String value)
 		{
 			// TODO (AmrAbed): Implement this
 			return null;
 		}
-		
+
+		@Override
 		public String toString()
 		{
 			return "[" + min + ((max == min) ? "" : ":" + step + ":" + max) + "]";
 		}
 	}
-
 
 }

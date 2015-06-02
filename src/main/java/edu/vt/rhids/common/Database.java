@@ -1,5 +1,10 @@
 package edu.vt.rhids.common;
 
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,6 +19,29 @@ import edu.vt.rhids.input.BoSC;
 public class Database extends HashMap<BoSC, Long>
 {
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Create normal-behavior database from a dump file
+	 * 
+	 * @param filePath
+	 *            path to the dump file
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 */
+	public Database(String filePath) throws NumberFormatException, IOException
+	{
+		if (filePath != null)
+		{
+			final BufferedReader reader = new BufferedReader(new FileReader(filePath));
+			String line;
+			while ((line = reader.readLine()) != null)
+			{
+				final String[] words = line.split(" => ");
+				put(new BoSC(words[0]), Long.parseLong(words[1]));
+			}
+			reader.close();
+		}
+	}
 
 	public void add(BoSC bosc)
 	{
@@ -76,12 +104,27 @@ public class Database extends HashMap<BoSC, Long>
 		return dot / (norm1 * norm2);
 	}
 
+	/**
+	 * Dump database to file for sharing purposes
+	 * 
+	 * @param filePath
+	 *            path to the output dump file
+	 * @throws IOException
+	 */
+	public void dump(String filePath) throws IOException
+	{
+		final OutputStream out = new FileOutputStream(filePath);
+		out.write(toString().getBytes());
+		out.close();
+	}
+
+	@Override
 	public String toString()
 	{
 		String output = new String();
 		for (ArrayList<Byte> entry : keySet())
 		{
-			output += entry + " => " + get(entry);
+			output += entry + " => " + get(entry) + "\n";
 		}
 		return output;
 	}

@@ -32,7 +32,6 @@ public class RHIDS
 
 	private static boolean isUnderAttack;
 	private static boolean isDoneTraining;
-	
 
 	public static void main(String[] args)
 	{
@@ -66,15 +65,16 @@ public class RHIDS
 
 						final BufferedReader reader = new BufferedReader(new FileReader(p.inputFile));
 						final Statistics stats = new Statistics(epochSize, trainThreshold, testThreshold);
-						final Classifier classifier = new Classifier(reader, stats);
-						
-						if (classifier.train())
+						final Classifier classifier = new Classifier(reader, stats, p.databaseFile);
+
+						if (classifier.trainUnconditionally())
 						{
 							classifier.test();
 							stats.print();
 							summary.add(stats);
 						}
-						Logger.log(summary, Verbosity.LOW);;
+						Logger.log(summary, Verbosity.LOW);
+						;
 					}
 				}
 			}
@@ -112,6 +112,11 @@ public class RHIDS
 				Logger.setHandler(command.getOptionValue("output-file"));
 			}
 
+			if (command.hasOption("database-file"))
+			{
+				parameters.setDatabaseFilePath(command.getOptionValue("database-file"));
+			}
+
 			parameters.setNormalFilePath(command.getOptionValue("input-file"));
 			parameters.setEpochSize(command.getOptionValue("epoch-size"));
 			parameters.setTrainThreshold(command.getOptionValue("train-threshold"));
@@ -138,12 +143,13 @@ public class RHIDS
 
 		options.addOptionGroup(group);
 
-		options.addOption("e", "epoch-size", true, 
-				"Range for epoch size (default "+ Parameters.DEFAULT_EPOCH_SIZE +")");
-		options.addOption("t", "train-threshold", true, 
-				"Range for training threshold (default "+ Parameters.DEFAULT_TRAIN_THRESHOLD +")");
-		options.addOption("d", "detection-threshold", true, 
-				"Range for detection threshold (default "+ Parameters.DEFAULT_TEST_THRESHOLD +")");
+		options.addOption("b", "database-file", true, "File to read database from");
+		options.addOption("e", "epoch-size", true, "Range for epoch size (default " + Parameters.DEFAULT_EPOCH_SIZE
+				+ ")");
+		options.addOption("t", "train-threshold", true, "Range for training threshold (default "
+				+ Parameters.DEFAULT_TRAIN_THRESHOLD + ")");
+		options.addOption("d", "detection-threshold", true, "Range for detection threshold (default "
+				+ Parameters.DEFAULT_TEST_THRESHOLD + ")");
 		options.addOption("v", "verbose", true, "Verbose level (default 0)");
 		options.addOption("o", "output-file", true, "Output file path");
 
