@@ -36,7 +36,7 @@ public class Database extends HashMap<BoSC, Long>
 			String line;
 			while ((line = reader.readLine()) != null)
 			{
-				final String[] words = line.split(" => ");
+				final String[] words = line.split("\t");
 				put(new BoSC(words[0]), Long.parseLong(words[1]));
 			}
 			reader.close();
@@ -115,6 +115,12 @@ public class Database extends HashMap<BoSC, Long>
 	{
 		final OutputStream out = new FileOutputStream(filePath);
 		out.write(toString().getBytes());
+
+		for (BoSC bosc : keySet())
+		{
+			final String text = bosc + "\t" + get(bosc) + "\n";
+			out.write(text.getBytes());
+		}
 		out.close();
 	}
 
