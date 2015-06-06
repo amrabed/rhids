@@ -2,6 +2,7 @@ package edu.vt.rhids.main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import edu.vt.rhids.common.Database;
@@ -40,28 +41,30 @@ public class Classifier
 		BoSC bosc;
 		String syscall;
 
-		while (!RHIDS.isDoneTraining())
+		try (PrintStream out = new PrintStream("/var/log/classifier/db-" + stats.getEpochSize() + ".dump"))
 		{
-			for (int i = 0; i < stats.getEpochSize(); i++)
+			while (!RHIDS.isDoneTraining())
 			{
-				if ((syscall = SyscallParser.parse(reader)) != null)
+				for (int i = 0; i < stats.getEpochSize(); i++)
 				{
-					bosc = window.slide(syscall).getBoSC();
-					db.add(bosc);
-					Logger.log(syscall + " => " + window + " => " + bosc, Verbosity.HIGH);
+					if ((syscall = SyscallParser.parse(reader)) != null)
+					{
+						bosc = window.slide(syscall).getBoSC();
+						db.add(bosc);
+						out.print(bosc);
+						Logger.log(syscall + " => " + window + " => " + bosc, Verbosity.HIGH);
+					}
+					else
+					{
+						// Failed to train using input file
+						Logger.signal("Training failed", Verbosity.LOW);
+						return false;
+					}
 				}
-				else
-				{
-					// Failed to train using input file
-					Logger.signal("Training failed", Verbosity.LOW);
-					db.dump("/var/log/db.dump");
-					return false;
-				}
+				Logger.log("Epoch " + stats.getTotalEpochs() + ": Database size is " + db.size(), Verbosity.MEDIUM);
+				stats.incrementTrainingEpochs();
 			}
-			Logger.log("Epoch " + stats.getTotalEpochs() + ": Database size is " + db.size(), Verbosity.MEDIUM);
-			stats.incrementTrainingEpochs();
 		}
-		db.dump("/var/log/db.dump");
 		return true;
 
 		// return train();
@@ -91,7 +94,6 @@ public class Classifier
 				{
 					// Failed to train using input file
 					Logger.signal("Training failed", Verbosity.LOW);
-					db.dump("/var/log/db.dump");
 					return false;
 				}
 			}
@@ -108,7 +110,6 @@ public class Classifier
 		Logger.emphasize("\nStable Database size: " + db.size(), Verbosity.LOW);
 		Logger.emphasize("\n" + stats.getTrainingEpochs() * stats.getEpochSize() + " system calls used for training\n",
 				Verbosity.LOW);
-		db.dump("/var/log/db.dump");
 		return true;
 	}
 

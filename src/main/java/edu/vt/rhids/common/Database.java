@@ -1,10 +1,8 @@
 package edu.vt.rhids.common;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -102,26 +100,6 @@ public class Database extends HashMap<BoSC, Long>
 			}
 		}
 		return dot / (norm1 * norm2);
-	}
-
-	/**
-	 * Dump database to file for sharing purposes
-	 * 
-	 * @param filePath
-	 *            path to the output dump file
-	 * @throws IOException
-	 */
-	public void dump(String filePath) throws IOException
-	{
-		final OutputStream out = new FileOutputStream(filePath);
-		out.write(toString().getBytes());
-
-		for (BoSC bosc : keySet())
-		{
-			final String text = bosc + "\t" + get(bosc) + "\n";
-			out.write(text.getBytes());
-		}
-		out.close();
 	}
 
 	@Override
