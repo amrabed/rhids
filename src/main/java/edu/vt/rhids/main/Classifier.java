@@ -51,7 +51,7 @@ public class Classifier
 					{
 						bosc = window.slide(syscall).getBoSC();
 						db.add(bosc);
-						out.print(bosc);
+						out.println(bosc);
 						Logger.log(syscall + " => " + window + " => " + bosc, Verbosity.HIGH);
 					}
 					else
