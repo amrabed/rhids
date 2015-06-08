@@ -8,7 +8,7 @@ import edu.vt.rhids.main.RHIDS;
 
 /**
  * Read system calls from input file
- * 
+ *
  * @author AmrAbed
  *
  */
@@ -17,9 +17,9 @@ public class SyscallParser
 	public static String parse(BufferedReader reader) throws IOException
 	{
 		try
-		{		
+		{
 			final String line = reader. readLine();
-			
+
 			Matcher matcher = Pattern.compile("STOP TRAINING").matcher(line);
 			if (matcher.find())
 			{
@@ -33,15 +33,15 @@ public class SyscallParser
 				RHIDS.setUnderAttack(true);
 				return parse(reader);
 			}
-			
+
 			matcher = Pattern.compile("END ATTACK").matcher(line);
 			if (matcher.find())
 			{
 				RHIDS.setUnderAttack(false);
 				return parse(reader);
 			}
-						
-			matcher = Pattern.compile("([a-z_]+)\\(").matcher(line);
+
+			matcher = Pattern.compile("([a-z_]+)").matcher(line);
 			if (matcher.find())
 			{
 				return matcher.group(1);

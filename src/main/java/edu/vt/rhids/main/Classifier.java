@@ -17,7 +17,7 @@ import edu.vt.rhids.util.Logger.Verbosity;
 
 /**
  * "Real-time" Classifier
- * 
+ *
  * @author AmrAbed
  *
  */
@@ -41,7 +41,7 @@ public class Classifier
 		BoSC bosc;
 		String syscall;
 
-		try (PrintStream out = new PrintStream("/var/log/classifier/db-" + stats.getEpochSize() + ".dump"))
+		try (PrintStream out = new PrintStream("/var/log/rhids/db-" + stats.getEpochSize() + ".dump"))
 		{
 			while (!RHIDS.isDoneTraining())
 			{

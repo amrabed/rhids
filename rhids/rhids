@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd "$(dirname "$0")" && sudo java -jar rhids.jar $@ | sudo tee /var/log/rhids/output
+
