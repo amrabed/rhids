@@ -114,7 +114,7 @@ public class Database extends HashMap<BoSC, Long>
 			Logger.log("Dumping database to " + file, Verbosity.MEDIUM);
 			for (BoSC bosc : keySet())
 			{
-				out.println(bosc);
+				out.println(bosc + "\t" + get(bosc));
 			}
 			Logger.log("Done", Verbosity.MEDIUM);
 		}
