@@ -1,12 +1,16 @@
 package edu.vt.rhids.common;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.vt.rhids.input.BoSC;
+import edu.vt.rhids.util.Logger;
+import edu.vt.rhids.util.Logger.Verbosity;
 
 /**
  * Normal-behavior Database
@@ -100,6 +104,20 @@ public class Database extends HashMap<BoSC, Long>
 			}
 		}
 		return dot / (norm1 * norm2);
+	}
+
+	public void dump(String id) throws FileNotFoundException
+	{
+		final String file = "/var/log/rhids/db-" + id + ".dump";
+		try (PrintStream out = new PrintStream(file))
+		{
+			Logger.log("Dumping database to " + file, Verbosity.MEDIUM);
+			for (BoSC bosc : keySet())
+			{
+				out.println(bosc);
+			}
+			Logger.log("Done", Verbosity.MEDIUM);
+		}
 	}
 
 	@Override

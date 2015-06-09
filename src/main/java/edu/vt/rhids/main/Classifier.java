@@ -2,7 +2,6 @@ package edu.vt.rhids.main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 
 import edu.vt.rhids.common.Database;
@@ -41,30 +40,28 @@ public class Classifier
 		BoSC bosc;
 		String syscall;
 
-		try (PrintStream out = new PrintStream("/var/log/rhids/db-" + stats.getEpochSize() + ".dump"))
+		while (!RHIDS.isDoneTraining())
 		{
-			while (!RHIDS.isDoneTraining())
+			for (int i = 0; i < stats.getEpochSize(); i++)
 			{
-				for (int i = 0; i < stats.getEpochSize(); i++)
+				if ((syscall = SyscallParser.parse(reader)) != null)
 				{
-					if ((syscall = SyscallParser.parse(reader)) != null)
-					{
-						bosc = window.slide(syscall).getBoSC();
-						db.add(bosc);
-						out.println(bosc);
-						Logger.log(syscall + " => " + window + " => " + bosc, Verbosity.HIGH);
-					}
-					else
-					{
-						// Failed to train using input file
-						Logger.signal("Training failed", Verbosity.LOW);
-						return false;
-					}
+					bosc = window.slide(syscall).getBoSC();
+					db.add(bosc);
+					Logger.log(syscall + " => " + window + " => " + bosc, Verbosity.HIGH);
 				}
-				Logger.log("Epoch " + stats.getTotalEpochs() + ": Database size is " + db.size(), Verbosity.MEDIUM);
-				stats.incrementTrainingEpochs();
+				else
+				{
+					// Failed to train using input file
+					Logger.signal("Training failed", Verbosity.LOW);
+					db.dump(String.valueOf(stats.getEpochSize()));
+					return false;
+				}
 			}
+			Logger.log("Epoch " + stats.getTotalEpochs() + ": Database size is " + db.size(), Verbosity.MEDIUM);
+			stats.incrementTrainingEpochs();
 		}
+		db.dump(String.valueOf(stats.getEpochSize()));
 		return true;
 
 		// return train();
