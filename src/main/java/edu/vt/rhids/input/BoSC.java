@@ -33,7 +33,7 @@ public class BoSC extends ArrayList<Byte>
 
 		for (String value : string.split(","))
 		{
-			add(Byte.parseByte(value));
+			add(Byte.parseByte(value.trim()));
 		}
 	}
 }
