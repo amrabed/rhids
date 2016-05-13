@@ -4,6 +4,9 @@ cd "$(dirname "$0")"
 
 APP_NAME="rhids"
 
+# Install strace-docker
+git clone https://github.com/amrabed/strace-docker.git && ./strace-docker/install
+
 # Install Java 8 (if not installed)
 if ! type java > /dev/null; then
     apt-get install -y software-properties-common
