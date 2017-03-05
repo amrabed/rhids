@@ -9,7 +9,7 @@ version = '0.1'
 task createJar(type: Jar) {
 	manifest {
         attributes 'Implementation-Title': 'RHIDS',  
-        	'Main-Class': mainClassName
+        'Main-Class': mainClassName
     }
     baseName = project.name
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
