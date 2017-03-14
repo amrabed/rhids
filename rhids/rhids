@@ -1,5 +1,6 @@
 #!/bin/bash
 
-time=$(date +%Y%m%d%H%M%S)
-cd "$(dirname "$0")" && sudo java -jar rhids.jar $@ | sudo tee /var/log/rhids/output-$time
+[ $(id -u) -ne 0 ] && echo "RHIDS needs to run as root" && exit 1
+
+cd "$(dirname "$0")" && java -jar rhids.jar $@ | tee /var/log/rhids/output-$(date +%Y%m%d%H%M%S)
 
