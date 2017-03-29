@@ -8,7 +8,8 @@ To use `rhids`, please make sure you have [`strace-docker`](https://github.com/a
 ## Usage
 ### Basic install
     git clone https://github.com/amrabed/rhids && sudo ./rhids/install
-    sudo rhids -h
+    sudo su 
+    rhids -h
 
 ### Using Docker
     docker run -it --rm --name rhids -v /var/log/strace-docker:/var/log/strace-docker amrabed/rhids
