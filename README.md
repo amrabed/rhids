@@ -12,6 +12,9 @@ To use `rhids`, please make sure you have [`strace-docker`](https://github.com/a
 
 ### Using Docker
     docker run -it --rm --name rhids -v /var/log/strace-docker:/var/log/strace-docker amrabed/rhids
-    
+
+### Using Python (experimental)
+    wget https://raw.githubusercontent.com/amrabed/rhids/experimental/rhids.py
+    python3 rhids.py <input-file> <epoch-size> <detection-threshold>
     
 <a id="footnote" href="#ref"><sup>*</sup></a> Implemented as part of my Ph.D. dissertation research. See [this paper](https://arxiv.org/abs/1611.03056) for more details
