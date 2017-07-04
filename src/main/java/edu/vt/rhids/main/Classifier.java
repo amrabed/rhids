@@ -155,7 +155,7 @@ public class Classifier
 				Logger.signal("ANOMALOUS EPOCH", Verbosity.MEDIUM);
 			}
 
-			if (nMismatches > stats.getTestThreshold())
+			if ((float) nMismatches / stats.getEpochSize() > stats.getTestThreshold() / 100.0f)
 			{
 				Logger.signal("Anomaly signal raised", Verbosity.MEDIUM);
 				stats.incrementAlarms(isAnomalousEpoch);
