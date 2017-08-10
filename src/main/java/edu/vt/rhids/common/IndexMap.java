@@ -8,7 +8,7 @@ import edu.vt.rhids.input.SyscallParser;
 
 /**
  * Lookup table for system call index
- * 
+ *
  * @author AmrAbed
  *
  */
@@ -19,10 +19,10 @@ public class IndexMap extends HashMap<String, Integer>
 	private IndexMap()
 	{
 	}
-	
+
 	/**
 	 * Build index map from count file
-	 * 
+	 *
 	 * @param reader
 	 */
 	public IndexMap(BufferedReader reader)
@@ -33,10 +33,10 @@ public class IndexMap extends HashMap<String, Integer>
 			while ((line = reader.readLine()) != null)
 			{
 				String[] words = line.split("\t");
-				if (Integer.parseInt(words[1]) < size())
-				{
-					break;
-				}
+//				if (Integer.parseInt(words[1]) < size())
+//				{
+//					break;
+//				}
 				put(words[0], size());
 			}
 			reader.close();
@@ -50,7 +50,7 @@ public class IndexMap extends HashMap<String, Integer>
 
 	/**
 	 * Build index map from first epoch
-	 * 
+	 *
 	 * @param reader
 	 * @param epochSize
 	 * @throws IOException
