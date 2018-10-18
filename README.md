@@ -1,5 +1,6 @@
 # RHIDS
 [![Build Status](https://travis-ci.org/amrabed/rhids.svg)](https://travis-ci.org/amrabed/rhids)
+[![Known Vulnerabilities](https://snyk.io/test/github/amrabed/rhids/badge.svg?targetFile=build.gradle)](https://snyk.io/test/github/amrabed/rhids?targetFile=build.gradle)
 
 Host-based Intrusion Detection System for Linux Containers<a href="#footnote" id="ref"><sup>*</sup></a>
 
