@@ -1,5 +1,6 @@
 # RHIDS
 [![Build Status](https://travis-ci.org/amrabed/rhids.svg)](https://travis-ci.org/amrabed/rhids)
+[![](https://sonarcloud.io/api/project_badges/measure?project=amrabed_rhids&metric=alert_status)](https://sonarcloud.io/dashboard?id=amrabed_rhids)
 [![Known Vulnerabilities](https://snyk.io/test/github/amrabed/rhids/badge.svg?targetFile=build.gradle)](https://snyk.io/test/github/amrabed/rhids?targetFile=build.gradle)
 [![GitHub issues](https://img.shields.io/github/issues/amrabed/rhids.svg)](https://github.com/amrabed/rhids/issues)
 [![GitHub (pre-)release](https://img.shields.io/github/release/amrabed/rhids/all.svg)](https://github.com/amrabed/rhids/releases)
