@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/amrabed/rhids.svg)](https://travis-ci.org/amrabed/rhids)
 [![Known Vulnerabilities](https://snyk.io/test/github/amrabed/rhids/badge.svg?targetFile=build.gradle)](https://snyk.io/test/github/amrabed/rhids?targetFile=build.gradle)
 [![GitHub issues](https://img.shields.io/github/issues/amrabed/rhids.svg)](https://github.com/amrabed/rhids/issues)
+[![GitHub (pre-)release](https://img.shields.io/github/release/amrabed/rhids/all.svg)](https://github.com/amrabed/rhids/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Host-based Intrusion Detection System for Linux Containers<a href="#footnote" id="ref"><sup>*</sup></a>
