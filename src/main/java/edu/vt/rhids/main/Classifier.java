@@ -1,5 +1,6 @@
 package edu.vt.rhids.main;
 
+import edu.vt.rhids.Main;
 import edu.vt.rhids.common.Database;
 import edu.vt.rhids.common.SimilarityVector;
 import edu.vt.rhids.input.BoSC;
@@ -36,7 +37,7 @@ class Classifier {
 		BoSC bosc;
 		String syscall;
 
-		while (!RHIDS.isDoneTraining()) {
+		while (Main.rhids.isTrainingActive()) {
 			for (int i = 0; i < stats.getEpochSize(); i++) {
 				if ((syscall = SyscallParser.parse(reader)) != null) {
 					bosc = window.slide(syscall).getBoSC();
@@ -56,13 +57,14 @@ class Classifier {
 		return true;
 	}
 
+	@SuppressWarnings("unused")
 	public boolean train() throws IOException {
 		final SimilarityVector similarity = new SimilarityVector();
 		final Window window = new Window();
 		Database lastEpochChange = new Database(null);
 		String syscall;
 
-		while (!RHIDS.isDoneTraining()) {
+		while (Main.rhids.isTrainingActive()) {
 			Logger.log("\nEpoch " + stats.getTotalEpochs(), Verbosity.MEDIUM);
 			final Database currentEpochChange = new Database(null);
 			for (int i = 0; i < stats.getEpochSize(); i++) {
@@ -103,7 +105,7 @@ class Classifier {
 
 			for (int i = 0; i < stats.getEpochSize(); i++) {
 				if ((syscall = SyscallParser.parse(reader)) != null) {
-					if (RHIDS.isUnderAttack()) {
+					if (Main.rhids.isUnderAttack()) {
 						isAnomalousEpoch = true;
 					}
 					final BoSC bosc = window.slide(syscall).getBoSC();
@@ -141,11 +143,11 @@ class Classifier {
 	/**
 	 * Test classifier in epochs
 	 *
-	 * @param reader
-	 * @param epochSize
-	 * @param testThreshold
+	 * @param reader BufferedReader of file to read syscalls from
+	 * @param epochSize Epoch size
+	 * @param testThreshold Test threshold
 	 * @return test results
-	 * @throws IOException
+	 * @throws IOException if reading from file fails
 	 * @deprecated
 	 */
 	@Deprecated
@@ -189,9 +191,9 @@ class Classifier {
 	/**
 	 * Test classifier in sequences
 	 *
-	 * @param reader
+	 * @param reader BufferedReader of file to read syscalls from
 	 * @return percentage of mismatches
-	 * @throws IOException
+	 * @throws IOException if reading from file fails
 	 * @deprecated
 	 */
 	@Deprecated

@@ -11,35 +11,27 @@ import java.util.HashMap;
  * Lookup table for system call index
  *
  * @author AmrAbed
- *
  */
-public class IndexMap extends HashMap<String, Integer>
-{
+public class IndexMap extends HashMap<String, Integer> {
 	private static final long serialVersionUID = 1L;
 
-	private IndexMap()
-	{
+	private IndexMap() {
 	}
 
 	/**
 	 * Build index map from count file
 	 *
-	 * @param reader
+	 * @param reader BufferedReader of file to read from
 	 */
-	public IndexMap(BufferedReader reader)
-	{
-		try
-		{
+	public IndexMap(BufferedReader reader) {
+		try {
 			String line;
-			while ((line = reader.readLine()) != null)
-			{
+			while ((line = reader.readLine()) != null) {
 				String[] words = line.split("\t");
 				put(words[0], size());
 			}
 			reader.close();
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			Logger.log(e.getMessage(), Logger.Verbosity.NONE);
 			System.exit(-2);
 		}
@@ -48,46 +40,35 @@ public class IndexMap extends HashMap<String, Integer>
 	/**
 	 * Build index map from first epoch
 	 *
-	 * @param reader
-	 * @param epochSize
-	 * @throws IOException
+	 * @param reader BufferedReader of file to read from
+	 * @param epochSize Epoch size
+	 * @throws IOException if reading from file fails
 	 */
-	public IndexMap(BufferedReader reader, int epochSize) throws IOException
-	{
+	@SuppressWarnings("unused")
+	public IndexMap(BufferedReader reader, int epochSize) throws IOException {
 		IndexMap temp = new IndexMap();
-		for (int i = 0; i < epochSize; i++)
-		{
+		for (int i = 0; i < epochSize; i++) {
 			String syscall;
-			if ((syscall = SyscallParser.parse(reader)) != null)
-			{
-				if (temp.containsKey(syscall))
-				{
+			if ((syscall = SyscallParser.parse(reader)) != null) {
+				if (temp.containsKey(syscall)) {
 					temp.replace(syscall, temp.get(syscall) + 1);
-				}
-				else
-				{
+				} else {
 					temp.put(syscall, 1);
 				}
 			}
 		}
 
-		for (String syscall : temp.keySet())
-		{
-			if (temp.get(syscall) > 1)
-			{
+		for (String syscall : temp.keySet()) {
+			if (temp.get(syscall) > 1) {
 				put(syscall, size());
 			}
 		}
 	}
 
-	private int get(String syscall)
-	{
-		if (containsKey(syscall))
-		{
+	private int get(String syscall) {
+		if (containsKey(syscall)) {
 			return super.get(syscall);
-		}
-		else
-		{
+		} else {
 			return size();
 		}
 	}

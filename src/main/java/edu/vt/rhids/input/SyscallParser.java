@@ -1,6 +1,6 @@
 package edu.vt.rhids.input;
 
-import edu.vt.rhids.main.RHIDS;
+import edu.vt.rhids.Main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,19 +22,19 @@ public class SyscallParser {
 
 			Matcher matcher = Pattern.compile("STOP TRAINING").matcher(line);
 			if (matcher.find()) {
-				RHIDS.setDoneTraining(true);
+				Main.rhids.setDoneTraining(true);
 				return parse(reader);
 			}
 
 			matcher = Pattern.compile("START ATTACK").matcher(line);
 			if (matcher.find()) {
-				RHIDS.setUnderAttack(true);
+				Main.rhids.setUnderAttack(true);
 				return parse(reader);
 			}
 
 			matcher = Pattern.compile("END ATTACK").matcher(line);
 			if (matcher.find()) {
-				RHIDS.setUnderAttack(false);
+				Main.rhids.setUnderAttack(false);
 				return parse(reader);
 			}
 

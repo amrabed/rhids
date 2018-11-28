@@ -11,7 +11,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Resilient Host-based Intrusion Detection System
@@ -19,22 +19,29 @@ import java.util.ArrayList;
  * @author AmrAbed
  */
 public class RHIDS {
-
 	private static final String OUTPUT_FILE = "output-file";
 	private static final String DB_FILE = "database-file";
 	private static final String VERBOSE = "verbose";
-	private static boolean isUnderAttack;
-	private static boolean isDoneTraining;
+	private static RHIDS instance = null;
 
-	public static void main(String[] args) {
-		Logger.log(run(parseArguments(args)), Verbosity.NONE);
+	private boolean isUnderAttack;
+	private boolean isDoneTraining;
+	private IndexMap indexMap;
+
+	private RHIDS() {
 	}
 
-	private static ArrayList<Statistics> run(Parameters p) {
+	public static RHIDS getInstance() {
+		if (instance == null) instance = new RHIDS();
+		return instance;
+	}
+
+	public List<Statistics> run(String[] args) {
+		final Parameters p = parseArguments(args);
 		Logger.log(p, Verbosity.NONE);
 		final Summary summary = new Summary();
 		try {
-			IndexMap indexMap = new IndexMap(new BufferedReader(new FileReader("syscalls")));
+			indexMap = new IndexMap(new BufferedReader(new FileReader("syscalls")));
 			Logger.log(indexMap, Verbosity.ALL);
 			Logger.emphasize("Number of distinct system calls: " + indexMap.size(), Verbosity.LOW);
 
@@ -71,7 +78,7 @@ public class RHIDS {
 		return summary;
 	}
 
-	private static Parameters parseArguments(String[] args) {
+	private Parameters parseArguments(String[] args) {
 		final Parameters parameters = new Parameters();
 		final Options options = createOptions();
 
@@ -107,7 +114,7 @@ public class RHIDS {
 		return parameters;
 	}
 
-	private static Options createOptions() {
+	private Options createOptions() {
 
 		final Options options = new Options();
 
@@ -131,19 +138,23 @@ public class RHIDS {
 		return options;
 	}
 
-	static boolean isUnderAttack() {
+	public IndexMap getIndexMap() {
+		return indexMap;
+	}
+
+	boolean isUnderAttack() {
 		return isUnderAttack;
 	}
 
-	public static void setUnderAttack(boolean isUnderAttack) {
-		RHIDS.isUnderAttack = isUnderAttack;
+	public void setUnderAttack(boolean isUnderAttack) {
+		this.isUnderAttack = isUnderAttack;
 	}
 
-	static boolean isDoneTraining() {
-		return isDoneTraining;
+	boolean isTrainingActive() {
+		return !isDoneTraining;
 	}
 
-	public static void setDoneTraining(boolean doneTraining) {
-		RHIDS.isDoneTraining = doneTraining;
+	public void setDoneTraining(boolean doneTraining) {
+		this.isDoneTraining = doneTraining;
 	}
 }

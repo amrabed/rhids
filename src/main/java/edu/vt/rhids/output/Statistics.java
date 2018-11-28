@@ -63,10 +63,6 @@ public class Statistics {
 		return epochSize;
 	}
 
-	public float getTrainThreshold() {
-		return trainThreshold;
-	}
-
 	private double getFalsePositiveRate() {
 		return 100 * (double) falseAlarms / normalEpochs;
 	}
