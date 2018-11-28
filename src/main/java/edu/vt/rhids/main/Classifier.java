@@ -1,9 +1,5 @@
 package edu.vt.rhids.main;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import edu.vt.rhids.common.Database;
 import edu.vt.rhids.common.SimilarityVector;
 import edu.vt.rhids.input.BoSC;
@@ -14,44 +10,39 @@ import edu.vt.rhids.output.TestResult;
 import edu.vt.rhids.util.Logger;
 import edu.vt.rhids.util.Logger.Verbosity;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
 /**
  * "Real-time" Classifier
  *
  * @author AmrAbed
- *
  */
-public class Classifier
-{
+class Classifier {
 	private final BufferedReader reader;
 	private final Statistics stats;
 	private final Database db;
 
-	public Classifier(BufferedReader reader, Statistics stats, String databaseFile) throws IOException
-	{
+	Classifier(BufferedReader reader, Statistics stats, String databaseFile) throws IOException {
 		this.reader = reader;
 		this.stats = stats;
 
 		db = new Database(databaseFile);
 	}
 
-	public boolean trainUnconditionally() throws IOException
-	{
+	boolean trainUnconditionally() throws IOException {
 		final Window window = new Window();
 		BoSC bosc;
 		String syscall;
 
-		while (!RHIDS.isDoneTraining())
-		{
-			for (int i = 0; i < stats.getEpochSize(); i++)
-			{
-				if ((syscall = SyscallParser.parse(reader)) != null)
-				{
+		while (!RHIDS.isDoneTraining()) {
+			for (int i = 0; i < stats.getEpochSize(); i++) {
+				if ((syscall = SyscallParser.parse(reader)) != null) {
 					bosc = window.slide(syscall).getBoSC();
 					db.add(bosc);
 					Logger.log(syscall + " => " + window + " => " + bosc, Verbosity.HIGH);
-				}
-				else
-				{
+				} else {
 					// Failed to train using input file
 					Logger.signal("Training failed", Verbosity.LOW);
 					db.dump(String.valueOf(stats.getEpochSize()));
@@ -63,32 +54,23 @@ public class Classifier
 		}
 		db.dump(String.valueOf(stats.getEpochSize()));
 		return true;
-
-		// return train();
 	}
 
-	public boolean train() throws IOException
-	{
+	public boolean train() throws IOException {
 		final SimilarityVector similarity = new SimilarityVector();
 		final Window window = new Window();
 		Database lastEpochChange = new Database(null);
 		String syscall;
 
-		// while (!similarity.isAbove(stats.getTrainThreshold()))
-		while (!RHIDS.isDoneTraining())
-		{
+		while (!RHIDS.isDoneTraining()) {
 			Logger.log("\nEpoch " + stats.getTotalEpochs(), Verbosity.MEDIUM);
 			final Database currentEpochChange = new Database(null);
-			for (int i = 0; i < stats.getEpochSize(); i++)
-			{
-				if ((syscall = SyscallParser.parse(reader)) != null)
-				{
+			for (int i = 0; i < stats.getEpochSize(); i++) {
+				if ((syscall = SyscallParser.parse(reader)) != null) {
 					BoSC bosc = window.slide(syscall).getBoSC();
 					currentEpochChange.add(bosc);
 					Logger.log(syscall + " => " + window + " => " + bosc, Verbosity.HIGH);
-				}
-				else
-				{
+				} else {
 					// Failed to train using input file
 					Logger.signal("Training failed", Verbosity.LOW);
 					return false;
@@ -110,58 +92,44 @@ public class Classifier
 		return true;
 	}
 
-	public void test() throws IOException
-	{
+	void test() throws IOException {
 		final Window window = new Window();
 		String syscall;
-		while (true)
-		{
+		while (true) {
 			final Database currentEpochChange = new Database(null);
 
 			boolean isAnomalousEpoch = false;
 			int nMismatches = 0;
 
-			for (int i = 0; i < stats.getEpochSize(); i++)
-			{
-				if ((syscall = SyscallParser.parse(reader)) != null)
-				{
-					if (RHIDS.isUnderAttack())
-					{
+			for (int i = 0; i < stats.getEpochSize(); i++) {
+				if ((syscall = SyscallParser.parse(reader)) != null) {
+					if (RHIDS.isUnderAttack()) {
 						isAnomalousEpoch = true;
 					}
 					final BoSC bosc = window.slide(syscall).getBoSC();
 
 					currentEpochChange.add(bosc);
-					if (!db.containsKey(bosc))
-					{
+					if (!db.containsKey(bosc)) {
 						nMismatches++;
 						Logger.signal(syscall + " => " + window + " => " + bosc + " => mismatch", Verbosity.HIGH);
-					}
-					else
-					{
+					} else {
 						Logger.log(syscall + " => " + window + " => " + bosc + " => match", Verbosity.HIGH);
 					}
-				}
-				else
-				{
+				} else {
 					// Incomplete epoch .. ignore (for now)
 					return;
 				}
 			}
 
 			Logger.log("Epoch " + stats.getTotalEpochs() + ": " + nMismatches + " mismatches", Verbosity.MEDIUM);
-			if (isAnomalousEpoch)
-			{
+			if (isAnomalousEpoch) {
 				Logger.signal("ANOMALOUS EPOCH", Verbosity.MEDIUM);
 			}
 
-			if ((float) nMismatches / stats.getEpochSize() > stats.getTestThreshold() / 100.0f)
-			{
+			if ((float) nMismatches / stats.getEpochSize() > stats.getTestThreshold() / 100.0f) {
 				Logger.signal("Anomaly signal raised", Verbosity.MEDIUM);
 				stats.incrementAlarms(isAnomalousEpoch);
-			}
-			else if (nMismatches > 0)
-			{
+			} else if (nMismatches > 0) {
 				db.commit(currentEpochChange);
 				Logger.emphasize("Current Database size: " + db.size(), Verbosity.MEDIUM);
 			}
@@ -172,16 +140,16 @@ public class Classifier
 
 	/**
 	 * Test classifier in epochs
-	 * 
+	 *
 	 * @param reader
 	 * @param epochSize
 	 * @param testThreshold
 	 * @return test results
 	 * @throws IOException
+	 * @deprecated
 	 */
 	@Deprecated
-	public TestResult test(BufferedReader reader, double testThreshold, int epochSize) throws IOException
-	{
+	public TestResult test(BufferedReader reader, double testThreshold, int epochSize) throws IOException {
 		final Window window = new Window();
 
 		String syscall;
@@ -193,26 +161,22 @@ public class Classifier
 		double nAnomalySignals = 0;
 		double nMismatches = 0;
 
-		while ((syscall = SyscallParser.parse(reader)) != null)
-		{
+		while ((syscall = SyscallParser.parse(reader)) != null) {
 			final BoSC bosc = window.slide(syscall).getBoSC();
 
-			if (!db.containsKey(bosc))
-			{
+			if (!db.containsKey(bosc)) {
 				nMismatches++;
 			}
 
 			nSyscalls++;
-			if (nSyscalls >= epochSize)
-			{
+			if (nSyscalls >= epochSize) {
 
 				Logger.log("\nTotal mismatches for epoch " + nEpochs + " is " + nMismatches, Verbosity.MEDIUM);
 
 				nEpochs++;
 				// Reached end of epoch
 				mismatchCounts.add(nMismatches);
-				if (nMismatches > testThreshold * epochSize)
-				{
+				if (nMismatches > testThreshold * epochSize) {
 					nAnomalySignals++;
 				}
 				nMismatches = 0;
@@ -224,33 +188,31 @@ public class Classifier
 
 	/**
 	 * Test classifier in sequences
-	 * 
+	 *
 	 * @param reader
 	 * @return percentage of mismatches
 	 * @throws IOException
+	 * @deprecated
 	 */
 	@Deprecated
-	public double test(BufferedReader reader) throws IOException
-	{
+	public double test(BufferedReader reader) throws IOException {
 		final Window window = new Window();
 
 		double mismatchCount = 0;
 		int totalSequences = 0;
 
 		String syscall;
-		while ((syscall = SyscallParser.parse(reader)) != null)
-		{
+		while ((syscall = SyscallParser.parse(reader)) != null) {
 			totalSequences++;
 
-			if (!db.containsKey(window.slide(syscall).getBoSC()))
-			{
+			if (!db.containsKey(window.slide(syscall).getBoSC())) {
 				mismatchCount++;
 			}
 		}
 
-		Logger.log("Total number of seqences: " + totalSequences, Verbosity.MEDIUM);
+		Logger.log("Total number of sequences: " + totalSequences, Verbosity.MEDIUM);
 		Logger.log("Number of mismatches: " + mismatchCount, Verbosity.MEDIUM);
 
-		return 100 * mismatchCount / totalSequences;
+		return totalSequences > 0 ? 100 * mismatchCount / totalSequences : 0;
 	}
 }

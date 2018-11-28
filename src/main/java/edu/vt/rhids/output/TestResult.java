@@ -1,37 +1,30 @@
 package edu.vt.rhids.output;
 
+import java.util.List;
 
-import java.util.ArrayList;
+public class TestResult {
+	private final int nEpochs;
+	private final double nAnomalySignals;
+	private final List<Double> mismatchCounts;
 
-public class TestResult
-{
-	public final int nEpochs;
-	public final double nAnomalySignals;
-	public final ArrayList<Double> mismatchCounts;
-
-	public TestResult(int nEpochs, double nAnomalySignals, ArrayList<Double> mismatchCounts)
-	{
+	public TestResult(int nEpochs, double nAnomalySignals, List<Double> mismatchCounts) {
 		this.nEpochs = nEpochs;
 		this.nAnomalySignals = nAnomalySignals;
 		this.mismatchCounts = mismatchCounts;
 	}
 
-	public double getAvgMismatches()
-	{
+	private double getAvgMismatches() {
 		double avgMismatchCount = 0;
-		for (double mismatchCount : mismatchCounts)
-		{
+		for (double mismatchCount : mismatchCounts) {
 			avgMismatchCount += mismatchCount;
 		}
 		return avgMismatchCount / mismatchCounts.size();
 	}
 
-	public String toString()
-	{
-		String output = new String();
-		output += "\nTotal Number of epochs: " + nEpochs;
-		output += "\nNumber of anomaly signals: " + nAnomalySignals;
-		output += "\nAverage number of mismatches per epoch: " + getAvgMismatches();
-		return output;
+	@Override
+	public String toString() {
+		return "\nTotal Number of epochs: " + nEpochs +
+				"\nNumber of anomaly signals: " + nAnomalySignals +
+				"\nAverage number of mismatches per epoch: " + getAvgMismatches();
 	}
 }

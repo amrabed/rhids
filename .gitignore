@@ -2,6 +2,10 @@ build/
 .gradle/
 /bin/
 
+.idea/
+*.iml
+*.class
+
 .settings/
 .classpath
 .project

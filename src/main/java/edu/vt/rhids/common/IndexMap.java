@@ -1,10 +1,11 @@
 package edu.vt.rhids.common;
 
+import edu.vt.rhids.input.SyscallParser;
+import edu.vt.rhids.util.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
-
-import edu.vt.rhids.input.SyscallParser;
 
 /**
  * Lookup table for system call index
@@ -33,17 +34,13 @@ public class IndexMap extends HashMap<String, Integer>
 			while ((line = reader.readLine()) != null)
 			{
 				String[] words = line.split("\t");
-//				if (Integer.parseInt(words[1]) < size())
-//				{
-//					break;
-//				}
 				put(words[0], size());
 			}
 			reader.close();
 		}
 		catch (IOException e)
 		{
-			System.err.println(e);
+			Logger.log(e.getMessage(), Logger.Verbosity.NONE);
 			System.exit(-2);
 		}
 	}
@@ -83,7 +80,7 @@ public class IndexMap extends HashMap<String, Integer>
 		}
 	}
 
-	public int get(String syscall)
+	private int get(String syscall)
 	{
 		if (containsKey(syscall))
 		{
@@ -95,13 +92,15 @@ public class IndexMap extends HashMap<String, Integer>
 		}
 	}
 
-	public String toString()
-	{
-		String output = new String();
-		for (String entry : keySet())
-		{
-			output += entry + " => " + get(entry);
+	@Override
+	public String toString() {
+		final StringBuilder output = new StringBuilder();
+		for (Entry<String, Integer> entry : entrySet()) {
+			output.append(entry.getKey());
+			output.append(" => ");
+			output.append(entry.getValue());
+			output.append('\n');
 		}
-		return output;
+		return output.toString();
 	}
 }

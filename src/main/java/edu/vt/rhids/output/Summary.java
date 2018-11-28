@@ -12,17 +12,18 @@ public class Summary extends ArrayList<Statistics>
 {
 	private static final long serialVersionUID = 1L;
 
-	public String toString()
-	{
-		// Returns MATLAB cell-array definition statement 
-		// (for data analysis and plotting)
-		String output = "{";
-		for (Statistics result : this)
-		{
-			output += result + ";";
+	/**
+	 * @return MATLAB cell-array definition statement (for data analysis and plotting)
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder output = new StringBuilder("{");
+		for (Statistics result : this) {
+			output.append(result);
+			output.append(';');
 		}
-		output += "};";
-		return output;
+		output.append("};");
+		return output.toString();
 	}
 
 }

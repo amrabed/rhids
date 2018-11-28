@@ -1,5 +1,4 @@
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'application'
 
 mainClassName = 'edu.vt.rhids.main.RHIDS'
@@ -16,11 +15,10 @@ task createJar(type: Jar) {
     with jar
 }
 
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
+    implementation 'commons-cli:commons-cli:1.2'
 }

@@ -1,37 +1,39 @@
 package edu.vt.rhids.main;
 
-public class Parameters
-{
-	public static final IntegerRange DEFAULT_EPOCH_SIZE = new IntegerRange(2500, 2500, 50000);
-	public static final FloatRange DEFAULT_TRAIN_THRESHOLD = new FloatRange(0.9f, 0.001f, 1f);
-	public static final IntegerRange DEFAULT_TEST_THRESHOLD = new IntegerRange(5, 5, 200);
+import edu.vt.rhids.util.Logger;
 
-	public String inputFile, databaseFile;
-	public IntegerRange epochSize = DEFAULT_EPOCH_SIZE;
-	public FloatRange trainThreshold = DEFAULT_TRAIN_THRESHOLD;
-	public IntegerRange testThreshold = DEFAULT_TEST_THRESHOLD;
+class Parameters {
+	static final IntegerRange DEFAULT_EPOCH_SIZE = new IntegerRange(2500, 2500, 50000);
+	static final FloatRange DEFAULT_TRAIN_THRESHOLD = new FloatRange(0.9f, 0.001f, 1f);
+	static final IntegerRange DEFAULT_TEST_THRESHOLD = new IntegerRange(5, 5, 200);
+	private static final String PARSE_FAILED = "Parsing failed: invalid range";
+	String inputFile;
+	String databaseFile;
+	IntegerRange epochSize = DEFAULT_EPOCH_SIZE;
+	FloatRange trainThreshold = DEFAULT_TRAIN_THRESHOLD;
+	IntegerRange testThreshold = DEFAULT_TEST_THRESHOLD;
 
-	public void setNormalFilePath(String normalFilePath)
+	void setNormalFilePath(String normalFilePath)
 	{
 		this.inputFile = normalFilePath;
 	}
 
-	public void setDatabaseFilePath(String databaseFile)
+	void setDatabaseFilePath(String databaseFile)
 	{
 		this.databaseFile = databaseFile;
 	}
 
-	public void setEpochSize(String range)
+	void setEpochSize(String range)
 	{
 		this.epochSize.set(range);
 	}
 
-	public void setTrainThreshold(String range)
+	void setTrainThreshold(String range)
 	{
 		this.trainThreshold.set(range);
 	}
 
-	public void setTestThreshold(String range)
+	void setTestThreshold(String range)
 	{
 		this.testThreshold.set(range);
 	}
@@ -39,7 +41,7 @@ public class Parameters
 	@Override
 	public String toString()
 	{
-		String output = new String();
+		String output = "";
 		output += "\nInput file: " + inputFile;
 		output += "\nEpoch-size range: " + epochSize;
 		output += "\nTraining-threshold range: " + trainThreshold;
@@ -49,7 +51,9 @@ public class Parameters
 
 	public static class IntegerRange
 	{
-		public int min, step, max;
+		int min;
+		int step;
+		int max;
 
 		private IntegerRange(int min, int step, int max)
 		{
@@ -58,7 +62,7 @@ public class Parameters
 			this.max = max;
 		}
 
-		public void set(String range)
+		private void set(String range)
 		{
 			if (range == null)
 			{
@@ -79,7 +83,7 @@ public class Parameters
 				max = Integer.parseInt(values[2]);
 				break;
 			default:
-				System.out.println("Parsing failed: invalid range");
+				Logger.log(PARSE_FAILED, Logger.Verbosity.NONE);
 				break;
 			}
 		}
@@ -93,7 +97,9 @@ public class Parameters
 
 	public static class FloatRange
 	{
-		public float min, step, max;
+		float min;
+		float step;
+		float max;
 
 		private FloatRange(float min, float step, float max)
 		{
@@ -102,7 +108,7 @@ public class Parameters
 			this.max = max;
 		}
 
-		public void set(String range)
+		private void set(String range)
 		{
 			if (range == null)
 			{
@@ -123,7 +129,7 @@ public class Parameters
 				max = Float.parseFloat(values[2]);
 				break;
 			default:
-				System.out.println("Parsing failed: invalid range");
+				Logger.log(PARSE_FAILED, Logger.Verbosity.NONE);
 				break;
 			}
 		}
@@ -134,55 +140,4 @@ public class Parameters
 			return "[" + min + ((max == min) ? "" : ":" + step + ":" + max) + "]";
 		}
 	}
-
-	public static class Range<T>
-	{
-		public T min, step, max;
-
-		private Range(T min, T step, T max)
-		{
-			this.min = min;
-			this.step = step;
-			this.max = max;
-		}
-
-		public void set(String range)
-		{
-			if (range == null)
-			{
-				return;
-			}
-			String[] values = range.split(":");
-			min = parse(values[0]);
-			switch (values.length)
-			{
-			case 1:
-				max = min;
-				break;
-			case 2:
-				max = parse(values[1]);
-				break;
-			case 3:
-				step = parse(values[1]);
-				max = parse(values[2]);
-				break;
-			default:
-				System.out.println("Parsing failed: invalid range");
-				break;
-			}
-		}
-
-		private T parse(String value)
-		{
-			// TODO (AmrAbed): Implement this
-			return null;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "[" + min + ((max == min) ? "" : ":" + step + ":" + max) + "]";
-		}
-	}
-
 }
