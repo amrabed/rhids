@@ -1,6 +1,5 @@
 package edu.vt.rhids.main;
 
-import edu.vt.rhids.Main;
 import edu.vt.rhids.common.Database;
 import edu.vt.rhids.common.SimilarityVector;
 import edu.vt.rhids.input.BoSC;
@@ -37,7 +36,7 @@ class Classifier {
 		BoSC bosc;
 		String syscall;
 
-		while (Main.rhids.isTrainingActive()) {
+		while (RHIDS.getInstance().isTrainingActive()) {
 			for (int i = 0; i < stats.getEpochSize(); i++) {
 				if ((syscall = SyscallParser.parse(reader)) != null) {
 					bosc = window.slide(syscall).getBoSC();
@@ -46,14 +45,14 @@ class Classifier {
 				} else {
 					// Failed to train using input file
 					Logger.signal("Training failed", Verbosity.LOW);
-					db.dump(String.valueOf(stats.getEpochSize()));
+					db.dump("/var/log/rhids/db-" + String.valueOf(stats.getEpochSize()) + ".dump");
 					return false;
 				}
 			}
 			Logger.log("Epoch " + stats.getTotalEpochs() + ": Database size is " + db.size(), Verbosity.MEDIUM);
 			stats.incrementTrainingEpochs();
 		}
-		db.dump(String.valueOf(stats.getEpochSize()));
+		db.dump("/var/log/rhids/db-" + String.valueOf(stats.getEpochSize()) + ".dump");
 		return true;
 	}
 
@@ -64,7 +63,7 @@ class Classifier {
 		Database lastEpochChange = new Database(null);
 		String syscall;
 
-		while (Main.rhids.isTrainingActive()) {
+		while (RHIDS.getInstance().isTrainingActive()) {
 			Logger.log("\nEpoch " + stats.getTotalEpochs(), Verbosity.MEDIUM);
 			final Database currentEpochChange = new Database(null);
 			for (int i = 0; i < stats.getEpochSize(); i++) {
@@ -105,7 +104,7 @@ class Classifier {
 
 			for (int i = 0; i < stats.getEpochSize(); i++) {
 				if ((syscall = SyscallParser.parse(reader)) != null) {
-					if (Main.rhids.isUnderAttack()) {
+					if (RHIDS.getInstance().isUnderAttack()) {
 						isAnomalousEpoch = true;
 					}
 					final BoSC bosc = window.slide(syscall).getBoSC();

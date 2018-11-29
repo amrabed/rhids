@@ -82,8 +82,7 @@ public class Database extends HashMap<BoSC, Long> {
 		return dot / (norm1 * norm2);
 	}
 
-	public void dump(String id) throws FileNotFoundException {
-		final String file = "/var/log/rhids/db-" + id + ".dump";
+	public void dump(String file) throws FileNotFoundException {
 		try (PrintStream out = new PrintStream(file)) {
 			Logger.log("Dumping database to " + file, Verbosity.MEDIUM);
 			for (Entry<BoSC, Long> entry : entrySet()) {

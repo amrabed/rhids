@@ -1,18 +1,22 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = 'edu.vt.rhids.main.RHIDS'
+mainClassName = 'edu.vt.rhids.Main'
 sourceCompatibility = 1.8
-version = '0.1'
+version = '0.2'
 
 task createJar(type: Jar) {
-	manifest {
-        attributes 'Implementation-Title': 'RHIDS',  
-        'Main-Class': mainClassName
+    manifest {
+        attributes 'Implementation-Title': 'rhids',
+                'Main-Class': mainClassName
     }
     baseName = project.name
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.extralibs.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
+}
+
+configurations {
+    extralibs
 }
 
 repositories {
@@ -20,5 +24,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'commons-cli:commons-cli:1.2'
+    implementation 'info.picocli:picocli:3.8.0'
+    extralibs 'info.picocli:picocli:3.8.0'
 }

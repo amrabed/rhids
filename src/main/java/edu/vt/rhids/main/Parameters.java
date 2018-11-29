@@ -1,44 +1,23 @@
 package edu.vt.rhids.main;
 
 import edu.vt.rhids.util.Logger;
+import picocli.CommandLine;
 
-class Parameters {
-	// You can update default RHIDS ranges here
-	static final IntegerRange DEFAULT_EPOCH_SIZE = new IntegerRange(2500, 2500, 50000);
+public class Parameters {
 	private static final String PARSE_FAILED = "Parsing failed: invalid range";
-	static final FloatRange DEFAULT_TRAIN_THRESHOLD = new FloatRange(0.9f, 0.001f, 1f);
-	static final IntegerRange DEFAULT_TEST_THRESHOLD = new IntegerRange(5, 5, 200);
+
+	final String inputFile;
+	final String databaseFile;
 	final IntegerRange epochSize;
 	final FloatRange trainThreshold;
 	final IntegerRange testThreshold;
 
-	String inputFile;
-	String databaseFile;
-
-	Parameters() {
-		epochSize = DEFAULT_EPOCH_SIZE;
-		trainThreshold = DEFAULT_TRAIN_THRESHOLD;
-		testThreshold = DEFAULT_TEST_THRESHOLD;
-	}
-
-	void setNormalFilePath(String normalFilePath) {
-		this.inputFile = normalFilePath;
-	}
-
-	void setDatabaseFilePath(String databaseFile) {
+	public Parameters(String inputFile, String databaseFile, IntegerRange epochSize, FloatRange trainThreshold, IntegerRange testThreshold) {
+		this.inputFile = inputFile;
 		this.databaseFile = databaseFile;
-	}
-
-	void setEpochSize(String range) {
-		this.epochSize.set(range);
-	}
-
-	void setTrainThreshold(String range) {
-		this.trainThreshold.set(range);
-	}
-
-	void setTestThreshold(String range) {
-		this.testThreshold.set(range);
+		this.epochSize = epochSize;
+		this.trainThreshold = trainThreshold;
+		this.testThreshold = testThreshold;
 	}
 
 	@Override
@@ -49,18 +28,18 @@ class Parameters {
 				"\nTest-threshold range: " + testThreshold;
 	}
 
-	public static class IntegerRange {
+	public static class IntegerRange implements CommandLine.ITypeConverter<IntegerRange> {
 		int min;
 		int step;
 		int max;
 
-		private IntegerRange(int min, int step, int max) {
-			this.min = min;
-			this.step = step;
-			this.max = max;
+
+		// Needed for picocli instantitation
+		@SuppressWarnings("unused")
+		public IntegerRange() {
 		}
 
-		private void set(String range) {
+		IntegerRange(String range) {
 			if (range == null) {
 				return;
 			}
@@ -87,20 +66,24 @@ class Parameters {
 		public String toString() {
 			return "[" + min + ((max == min) ? "" : ":" + step + ":" + max) + "]";
 		}
+
+		@Override
+		public IntegerRange convert(String value) {
+			return new IntegerRange(value);
+		}
 	}
 
-	public static class FloatRange {
+	public static class FloatRange implements CommandLine.ITypeConverter<FloatRange> {
 		float min;
 		float step;
 		float max;
 
-		private FloatRange(float min, float step, float max) {
-			this.min = min;
-			this.step = step;
-			this.max = max;
+		// Needed for picocli instantitation
+		@SuppressWarnings("unused")
+		public FloatRange() {
 		}
 
-		private void set(String range) {
+		FloatRange(String range) {
 			if (range == null) {
 				return;
 			}
@@ -126,6 +109,11 @@ class Parameters {
 		@Override
 		public String toString() {
 			return "[" + min + ((max == min) ? "" : ":" + step + ":" + max) + "]";
+		}
+
+		@Override
+		public FloatRange convert(String value) {
+			return new FloatRange(value);
 		}
 	}
 }
