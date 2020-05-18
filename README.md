@@ -16,6 +16,8 @@ To use `rhids`, please make sure you have [`strace-docker`](https://github.com/a
     sudo su 
     rhids -h
 
+[![How to use the RHIDS tool](https://img.youtube.com/vi/R5BHjYZ22Tw/0.jpg)](https://www.youtube.com/watch?v=R5BHjYZ22Tw)
+
 ### Using Docker
     docker run -it --rm --name rhids -v /var/log/strace-docker:/var/log/strace-docker amrabed/rhids
     
