@@ -6,16 +6,10 @@ APP_NAME="rhids"
 
 # Install Java 8 (if not installed)
 if ! type java > /dev/null; then
-    apt-get install -y software-properties-common
-    add-apt-repository -y ppa:webupd8team/java
-    apt-get update
-    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
-    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
-    apt-get install -y oracle-java8-installer
+  apt install -y default-jre
 fi
 
 # Build and install project
 ./gradlew createJar && cp build/libs/*.jar $APP_NAME/$APP_NAME.jar
-cp -r $APP_NAME /usr/bin
-sed -i "/^PATH/s/\"$/:\/usr\/bin\/$APP_NAME\"/g" /etc/environment
+cp -r $APP_NAME/* /usr/bin
 mkdir /var/log/$APP_NAME
